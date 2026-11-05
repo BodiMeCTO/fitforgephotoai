@@ -1,0 +1,13 @@
+# The CPU pilot: 12 bodies x 2 designs x 4 ease steps x 3 fabrics = 288 samples, about 245 s
+# each on one CPU core with the solver's production drape settings at a 2 cm mesh.
+# 4 workers (scripts/run_workers.sh) finish it in about 5 hours.
+seed: 7
+n_bodies: 12
+female_ratio: 0.5
+poses: [rest]
+designs: [shirt, shirt_fitted]
+ease_offsets_cm: [-8.0, -2.0, 4.0, 12.0]
+# rigid woven, woven, stretch knit (elasticity classes 0, 1, 3 of photoai.garments)
+fabrics: [denim, cotton_poplin, jersey_knit]
+image: {width: 384, height: 512}
+drape: {edge_length_cm: 2.0}

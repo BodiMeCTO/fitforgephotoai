@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+# Everything the builder writes. A sample holds meshes drafted from GarmentCode presets on Anny
+# bodies and renders of them; this repo is PUBLIC, so outputs are never committed. Regenerate
+# from the config and seed.
+outputs/
+datasets/
+# per-worker warp kernel caches
+.warp-cache*/

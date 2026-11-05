@@ -1,0 +1,7 @@
+# one sample end to end: a check of the pipeline, not a dataset
+seed: 1
+n_bodies: 1
+designs: [shirt_fitted]
+ease_offsets_cm: [4.0]
+fabrics: [cotton_poplin]
+image: {width: 384, height: 512}

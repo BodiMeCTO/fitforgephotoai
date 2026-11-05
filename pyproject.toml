@@ -1,0 +1,24 @@
+[project]
+name = "fitforgephotoai"
+version = "0.1.0"
+description = "Synthetic dataset builder: garments draped on bodies with exact ease and elasticity labels, for training a photo model (prototype)"
+requires-python = ">=3.11"
+# Runs INSIDE the solver's environment (fitforgesolver/.venv): the solver, warp, torch,
+# anny and annyextension come from there. Nothing is resolved here - see README "Setup".
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["photoai"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+markers = ["slow: builds bodies or runs a drape (minutes)"]
