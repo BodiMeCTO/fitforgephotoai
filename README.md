@@ -94,7 +94,8 @@ cd fitforgesolver && .venv/bin/python -m photoai probe --run ../fitforgephotoai/
 - `run` is resumable and sharded: each worker takes every Nth job of the same deterministic grid
   and skips samples already written. Each worker needs its own warp kernel cache
   (`WARP_CACHE_PATH`); the script sets one per worker. CPU only (`CUDA_VISIBLE_DEVICES=-1`).
-- `configs/pilot_cpu.yaml` is the 288-sample run (12 bodies): about 5 hours on 4 cores.
+- `configs/pilot_cpu.yaml` is the 288-sample run (12 bodies). Measured: four workers side by side
+  slow each drape to about 660 s, so about 22 samples an hour on this 4-core box: 13 hours.
 - `probe` trains a very small image model on one view with whole bodies held out and reports
   against predict-the-median / predict-the-majority baselines. It is an identifiability check on
   synthetic data only; it says nothing about real photographs.
@@ -140,6 +141,7 @@ datasets/<name>/<name>-000000.tar, index.jsonl, dataset.json, CARD.md
 
 ## Status
 
-Prototype, 2026-11-05. One smoke sample and a 24-sample demo run were built on CPU in this
-session; the 288-sample pilot was not (a session restart killed it after 10 hours, with no
-sample finished). `issues/` lists what was found. The handoff is `docs/handoff-2026-11-05.md`.
+Prototype, 2026-11-05. Built on CPU in this session: one smoke sample and the first samples of
+the 24-sample demo run (the count is in `docs/handoff-2026-11-05.md`; the session's restarts
+killed background workers, so only short foreground rounds completed). The 288-sample pilot was
+not run. `issues/` lists what was found.
