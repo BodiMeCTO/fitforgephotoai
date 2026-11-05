@@ -1,0 +1,11 @@
+# A small run that finishes in about half an hour on 4 CPU cores: 2 bodies x 2 designs x
+# 3 ease steps x 2 fabrics = 24 samples. For a look at what a sample is, not for training.
+seed: 7
+n_bodies: 2
+female_ratio: 0.5
+poses: [rest]
+designs: [shirt, shirt_fitted]
+ease_offsets_cm: [-8.0, 4.0, 12.0]
+fabrics: [denim, jersey_knit]
+image: {width: 384, height: 512}
+drape: {edge_length_cm: 2.0}
