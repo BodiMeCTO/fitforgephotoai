@@ -111,6 +111,12 @@ of what the pipeline needs from them.
 
 ## 7. The decisions this needs
 
+**Keith's answers, 2026-11-05:** (1) spike only, no ADR change yet: ADR-0080 stands and the
+solver's deletion of its old dataset lane goes ahead; amend only if the probe shows the labels
+are readable. (2) **Add the solver job kind first** (S1, with the API route A2) before any more
+samples are built: the in-process call to the solver is not to be extended. (3) The pilot runs
+on the solver's GPU box, as the only warp process on it.
+
 1. **Reverse or amend ADR-0080 decision 4** (the dataset is not a goal) if the spike result
    (section 8) warrants it. Until then this repo is a spike, not a track.
 2. **ADR-0043 (the API is the only caller).** The prototype imports the solver in-process. The
