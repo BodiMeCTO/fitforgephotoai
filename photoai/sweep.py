@@ -37,7 +37,7 @@ from photoai.garments import (
     ease_ladder,
     pattern_ease_cm,
 )
-from photoai.measure import garment_girths_cm
+from photoai.measure import body_girths_cm, garment_girths_cm
 from photoai.render import (
     DEFAULT_VIEWS,
     View,
@@ -162,6 +162,10 @@ class BodyStore:
             self._write(index, pose, mesh)
         return self._posed[key]
 
+    def contour_girths(self, index: int, pose: str) -> dict:
+        body = self.body(index, pose)
+        return body_girths_cm(body.vertices, body.triangulated_faces())
+
     def sdf(self, index: int, pose: str):
         key = (index, pose)
         if key not in self._sdf:
@@ -265,12 +269,17 @@ def run_sample(job: Job, cfg: dict, bodies: BodyStore, out: Path) -> dict:
         panel_names = [p.name for p in pattern.panels]
         g_girth = garment_girths_cm(result.vertices, result.faces, engine.face_panels(result),
                                     panel_names, body.vertices)
-        b_girth = {k: body_meas[k] for k in ("bust", "waist", "hips")}
+        b_girth = bodies.contour_girths(job.body_index, job.pose)
         rec["timings_s"]["qc_labels"] = round(time.time() - t, 2)
         rec["labels"] = {
             "ease_designed_cm": designed_ease_cm(step.measurements, body_meas),
-            "ease_pattern_cm": pattern_ease_cm(chart, body_meas),
+            # bust only: the solver's chart reader clamps waist and hip to the hem on a drafted
+            # shirt (issue 2026-11-05-chrt); the full chart is in the garment block
+            "ease_pattern_cm": ({"bust": pattern_ease_cm(chart, body_meas)["bust"]}
+                                if pattern_ease_cm(chart, body_meas)
+                                and "bust" in pattern_ease_cm(chart, body_meas) else None),
             "garment_girth_torso_cm": g_girth,
+            "body_girth_contour_cm": b_girth,
             "ease_worn_cm": {k: round(g_girth[k] - b_girth[k], 2) for k in g_girth
                              if k in b_girth},
             "elasticity_class": ELASTICITY_LADDER[job.fabric],
@@ -346,6 +355,10 @@ def run(cfg: dict, out: str | Path, shard: int = 0, n_shards: int = 1,
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "config.json").write_text(json.dumps(cfg, indent=1), encoding="utf-8")
+    bad = [p for p in cfg["poses"] if p != "rest"]
+    if bad:  # the slice rule's arm band assumes the rest pose (review finding 4; spec S8)
+        raise ValueError(f"only the rest pose is supported until the worn girth handles a posed "
+                         f"body (spec S8); got {bad}")
     jobs = shard_of(build_grid(cfg), shard, n_shards)
     if limit:
         jobs = jobs[:limit]
